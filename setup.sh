@@ -87,20 +87,54 @@ npm install
 echo -e "${BLUE}Building the project...${NC}"
 npm run build
 
-# Set up a simple server to serve the built files
-# Check if serve is installed
+# Install PM2 if not already installed
+if ! [ -x "$(command -v pm2)" ]; then
+  echo -e "${BLUE}Installing PM2 for process management...${NC}"
+  npm install -g pm2
+else
+  echo -e "${GREEN}PM2 is already installed.${NC}"
+fi
+
+# Create PM2 configuration file
+echo -e "${BLUE}Creating PM2 configuration...${NC}"
+cat > ecosystem.config.js << EOL
+module.exports = {
+  apps: [{
+    name: "festive-name-creator",
+    script: "node_modules/.bin/serve",
+    env: {
+      PM2_SERVE_PATH: "./dist",
+      PM2_SERVE_SPA: "true",
+      PM2_SERVE_HOMEPAGE: "/index.html"
+    }
+  }]
+}
+EOL
+
+# Install serve if not already installed
 if ! [ -x "$(command -v serve)" ]; then
   echo -e "${BLUE}Installing serve...${NC}"
   npm install -g serve
 fi
 
-# Determine port to use (default: 8080)
-PORT=${1:-8080}
+# Start or restart the application with PM2
+if pm2 show festive-name-creator > /dev/null 2>&1; then
+  echo -e "${BLUE}Restarting the application with PM2...${NC}"
+  pm2 restart festive-name-creator
+else
+  echo -e "${BLUE}Starting the application with PM2...${NC}"
+  pm2 start ecosystem.config.js
+fi
 
-# Add some additional info about domain configuration
-echo -e "${BLUE}Domain configuration for ${GREEN}$DOMAIN${NC}:"
-echo -e "${BLUE}You may need to set up a web server like Nginx or Apache to proxy requests to this application.${NC}"
+# Save the PM2 process list
+pm2 save
 
+# Set up PM2 to start on system boot
+echo -e "${BLUE}Setting up PM2 to start on system boot...${NC}"
+pm2 startup
+
+# Create an example Nginx configuration
+echo -e "${BLUE}Creating example Nginx configuration...${NC}"
 cat > nginx-example.conf << EOL
 # Example Nginx configuration for $DOMAIN
 server {
@@ -108,7 +142,7 @@ server {
     server_name $DOMAIN;
 
     location / {
-        proxy_pass http://localhost:$PORT;
+        proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -118,29 +152,17 @@ server {
 }
 EOL
 
-echo -e "${BLUE}Created example Nginx configuration in ${GREEN}nginx-example.conf${NC}"
-echo -e "${BLUE}You can use this file to set up Nginx with your domain.${NC}"
-
 echo -e "${GREEN}==========================================${NC}"
-echo -e "${GREEN}Setup completed successfully!${NC}"
-echo -e "${GREEN}To start the application, run:${NC}"
-echo -e "${BLUE}cd $REPO_DIR && npm run dev${NC}"
-echo -e "${GREEN}OR to serve the production build:${NC}"
-echo -e "${BLUE}cd $REPO_DIR && serve -s dist -l $PORT${NC}"
-echo -e "${GREEN}For production deployment, use:${NC}"
-echo -e "${BLUE}./deploy.sh${NC}"
-echo -e "${GREEN}The application will be available at:${NC}"
-echo -e "${BLUE}http://$DOMAIN${NC} (after configuring your web server)"
+echo -e "${GREEN}تم تثبيت وتشغيل المشروع بنجاح!${NC}"
+echo -e "${GREEN}المشروع يعمل الآن ويدار بواسطة PM2.${NC}"
+echo -e "${GREEN}تم إنشاء ملف تكوين Nginx مثالي في ${BLUE}nginx-example.conf${GREEN} يمكنك استخدامه لإعداد الخادم الخاص بك.${NC}"
+echo -e "${BLUE}ملاحظة: تأكد من أن الدومين ${GREEN}$DOMAIN${BLUE} يشير إلى عنوان IP الخاص بالخادم.${NC}"
 echo -e "${GREEN}==========================================${NC}"
-
-# Ask if the user wants to start the server now
-read -p "Do you want to start the server now? (y/n) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-  echo -e "${BLUE}Starting the server on port $PORT...${NC}"
-  echo -e "${BLUE}Press Ctrl+C to stop the server.${NC}"
-  serve -s dist -l $PORT
-fi
+echo -e "${GREEN}أوامر PM2 المفيدة:${NC}"
+echo -e "${BLUE}  عرض السجلات: pm2 logs festive-name-creator${NC}"
+echo -e "${BLUE}  إيقاف التطبيق: pm2 stop festive-name-creator${NC}"
+echo -e "${BLUE}  إعادة تشغيل التطبيق: pm2 restart festive-name-creator${NC}"
+echo -e "${BLUE}  مراقبة: pm2 monit${NC}"
+echo -e "${GREEN}==========================================${NC}"
 
 exit 0
