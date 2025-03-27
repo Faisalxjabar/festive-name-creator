@@ -66,29 +66,17 @@ else
   echo -e "${GREEN}git is already installed. Version: $(git --version)${NC}"
 fi
 
-# Determine suitable directory for installation
-# Try current directory first, if not writable use home directory
-REPO_DIR="festive-name-creator"
-if [ ! -w "." ]; then
-  echo -e "${BLUE}Current directory is not writable, using home directory instead.${NC}"
-  cd $HOME
-  echo -e "${BLUE}Changed to directory: $(pwd)${NC}"
-fi
+# Always use current directory
+CURRENT_DIR=$(pwd)
+echo -e "${BLUE}Installing in current directory: ${GREEN}$CURRENT_DIR${NC}"
 
-# Clone the repository if not already done
-if [ ! -d "$REPO_DIR" ]; then
-  echo -e "${BLUE}Cloning the repository...${NC}"
-  git clone "$REPO_URL" "$REPO_DIR" --depth=1
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}Failed to clone repository. Trying to create directory manually...${NC}"
-    mkdir -p "$REPO_DIR"
-    cd "$REPO_DIR"
-    echo -e "${BLUE}Initializing git repository...${NC}"
-    git init
-    echo -e "${BLUE}Creating basic project structure...${NC}"
-    # Create basic HTML file
-    mkdir -p public src
-    cat > public/index.html << EOL
+# Clone the repository content directly to current directory
+echo -e "${BLUE}Cloning the repository content to current directory...${NC}"
+git clone "$REPO_URL" temp_clone --depth=1
+if [ $? -ne 0 ]; then
+  echo -e "${RED}Failed to clone repository. Creating basic project structure...${NC}"
+  mkdir -p public src
+  cat > public/index.html << EOL
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -104,18 +92,15 @@ if [ ! -d "$REPO_DIR" ]; then
   </body>
 </html>
 EOL
-    cd ..
-  fi
 else
-  echo -e "${GREEN}Repository already exists. Pulling latest changes...${NC}"
-  cd "$REPO_DIR"
-  git pull
-  cd ..
+  # Move all files from the temp clone to current directory
+  echo -e "${BLUE}Moving files to current directory...${NC}"
+  mv temp_clone/* .
+  mv temp_clone/.* . 2>/dev/null || true
+  rm -rf temp_clone
 fi
 
-# Navigate to the project directory
-cd "$REPO_DIR"
-FULL_PATH=$(pwd)
+FULL_PATH=$CURRENT_DIR
 echo -e "${BLUE}Working in directory: ${GREEN}$FULL_PATH${NC}"
 
 # Install dependencies
