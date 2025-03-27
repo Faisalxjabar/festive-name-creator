@@ -15,7 +15,7 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <span className="bg-black/5 px-3 py-1 rounded-full text-sm text-black/70 font-arabic">
+          <span className="bg-black/5 px-3 py-1 rounded-full text-sm text-black/70 font-cairo">
             عيد فطر مبارك
           </span>
         </div>

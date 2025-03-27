@@ -61,10 +61,10 @@ const Index = () => {
       <div className="container mx-auto py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 animate-fade-in">
-            <h2 className="text-3xl font-bold text-black mb-3 font-arabic">
+            <h2 className="text-3xl font-bold text-black mb-3 font-cairo">
               بطاقة معايدة عيد الفطر
             </h2>
-            <p className="text-lg text-black/80 font-arabic animate-slide-up max-w-2xl mx-auto">
+            <p className="text-lg text-black/80 font-cairo animate-slide-up max-w-2xl mx-auto">
               أضف اسمك لبطاقة المعايدة وقم بتحميلها لمشاركتها مع العائلة والأصدقاء
             </p>
           </div>
@@ -73,7 +73,7 @@ const Index = () => {
             <div className="glass-panel p-8 rounded-xl shadow-xl animate-fade-in order-2 lg:order-1">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="block text-xl text-black font-arabic font-semibold">
+                  <label htmlFor="name" className="block text-xl text-black font-cairo font-semibold">
                     اسم الموظف
                   </label>
                   <Input
@@ -111,7 +111,7 @@ const Index = () => {
                 />
                 
                 <div className="mt-4 p-4 bg-white/10 rounded-lg border border-white/20">
-                  <p className="text-sm text-black/70 font-arabic text-center">
+                  <p className="text-sm text-black/70 font-cairo text-center">
                     يمكنك تحميل البطاقة بعد إنشائها ومشاركتها على وسائل التواصل الاجتماعي
                   </p>
                 </div>
@@ -128,7 +128,7 @@ const Index = () => {
                     />
                   </div>
                 ) : (
-                  <div className="text-center p-8 text-black font-arabic" style={{ width: '288px', height: '512px' }}>
+                  <div className="text-center p-8 text-black font-cairo" style={{ width: '288px', height: '512px' }}>
                     <div className="bg-black/5 p-6 rounded-xl backdrop-blur-sm">
                       <p className="text-lg mb-2">أدخل اسمك واضغط على إنشاء البطاقة</p>
                       <p className="text-sm opacity-70">سيظهر هنا معاينة للبطاقة</p>
@@ -141,7 +141,7 @@ const Index = () => {
         </div>
       </div>
       
-      <footer className="py-6 text-center text-black/60 font-arabic text-sm mt-8 border-t border-white/10 backdrop-blur-sm bg-white/5">
+      <footer className="py-6 text-center text-black/60 font-cairo text-sm mt-8 border-t border-white/10 backdrop-blur-sm bg-white/5">
         <div className="container mx-auto">
           <p>© {new Date().getFullYear()} جميع الحقوق محفوظة</p>
         </div>
