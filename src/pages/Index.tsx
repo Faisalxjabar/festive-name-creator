@@ -112,7 +112,7 @@ const Index = () => {
       </main>
       
       <footer className="bg-white py-4 text-center text-sm text-gray-500 font-cairo border-t">
-        جميع الحقوق محفوظة © {new Date().getFullYear()}
+        © 2025 جميع الحقوق محفوظة لـ Black Knight
       </footer>
     </div>
   );
