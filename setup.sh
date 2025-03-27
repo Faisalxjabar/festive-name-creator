@@ -11,7 +11,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 DOMAIN="eid.b-k.coffee"
-# استخدام عنوان المستودع العام بدلاً من استخدام اسم المستخدم الوهمي
+# استخدام عنوان المستودع العام بدلاً من استخدام اسم المستخدم
 REPO_URL="https://github.com/faisalxjabar/festive-name-creator.git"
 
 echo -e "${BLUE}===================================================${NC}"
@@ -78,8 +78,7 @@ fi
 # Clone the repository if not already done
 if [ ! -d "$REPO_DIR" ]; then
   echo -e "${BLUE}Cloning the repository...${NC}"
-  # استخدام المتغير الجديد REPO_URL بدلاً من الرابط المباشر
-  git clone "$REPO_URL" "$REPO_DIR"
+  git clone "$REPO_URL" "$REPO_DIR" --depth=1
   if [ $? -ne 0 ]; then
     echo -e "${RED}Failed to clone repository. Trying to create directory manually...${NC}"
     mkdir -p "$REPO_DIR"
