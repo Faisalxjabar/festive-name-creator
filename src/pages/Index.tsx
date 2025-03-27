@@ -118,19 +118,17 @@ const Index = () => {
               </form>
             </div>
 
-            <div className="relative rounded-xl overflow-hidden shadow-2xl animate-fade-in order-1 lg:order-2">
-              <div className="w-full aspect-[9/16] bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="relative rounded-xl shadow-2xl animate-fade-in order-1 lg:order-2 flex justify-center">
+              <div className="relative" style={{ width: 'auto', height: 'auto', maxWidth: '100%' }}>
                 {submittedName ? (
-                  <div className="w-full h-full overflow-auto bg-white/10 rounded-xl">
-                    <div className="transform scale-[0.3] origin-top-left">
-                      <EidCard 
-                        employeeName={submittedName} 
-                        onImageGenerated={handleImageGenerated} 
-                      />
-                    </div>
+                  <div className="overflow-hidden" style={{ width: '576px', height: '1024px', transform: 'scale(0.5)', transformOrigin: 'top center' }}>
+                    <EidCard 
+                      employeeName={submittedName} 
+                      onImageGenerated={handleImageGenerated} 
+                    />
                   </div>
                 ) : (
-                  <div className="text-center p-8 text-black font-arabic">
+                  <div className="text-center p-8 text-black font-arabic" style={{ width: '288px', height: '512px' }}>
                     <div className="bg-black/5 p-6 rounded-xl backdrop-blur-sm">
                       <p className="text-lg mb-2">أدخل اسمك واضغط على إنشاء البطاقة</p>
                       <p className="text-sm opacity-70">سيظهر هنا معاينة للبطاقة</p>

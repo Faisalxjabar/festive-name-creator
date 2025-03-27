@@ -52,7 +52,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
 
   if (!isLoaded) {
     return (
-      <div className="w-[1152px] h-[2048px] bg-eid-yellow/50 rounded-lg flex items-center justify-center">
+      <div className="w-[576px] h-[1024px] bg-eid-yellow/50 rounded-lg flex items-center justify-center">
         <div className="animate-pulse text-black text-xl">جاري تحميل الصورة...</div>
       </div>
     );
@@ -61,7 +61,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
   return (
     <div 
       ref={cardRef} 
-      className="relative w-[1152px] h-[2048px] overflow-hidden card-image"
+      className="relative w-[576px] h-[1024px] overflow-hidden card-image"
       style={{ 
         backgroundImage: `url(/lovable-uploads/3ca3041a-3d6f-42b5-bd45-0ca8aa506516.png)`,
         backgroundSize: 'contain',
@@ -73,10 +73,10 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
         <div 
           className="absolute animate-fade-in"
           style={{
-            left: '159px',
-            top: '1300px', // Changed position from 1050px to 1300px to move it further down
-            width: '834px',
-            height: '144px',
+            left: '80px',
+            top: '650px',
+            width: '417px',
+            height: '72px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
