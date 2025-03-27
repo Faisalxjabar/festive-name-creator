@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -14,6 +14,12 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const downloadLinkRef = useRef<HTMLAnchorElement>(null);
   const isMobile = useIsMobile();
+
+  // Clear any previous state on component mount
+  useEffect(() => {
+    setGeneratedImage(null);
+    setSubmittedName("");
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

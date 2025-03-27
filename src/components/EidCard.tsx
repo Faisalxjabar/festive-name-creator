@@ -56,16 +56,16 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       // Draw background image
       ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
       
-      // Add text - Change font to Swissra and increase size
-      ctx.font = "bold 64px Swissra, Cairo, sans-serif"; // Increased from 60px to 64px
+      // Add text - Swissra font with increased size
+      ctx.font = "bold 70px Swissra, Cairo, sans-serif"; // Increased from 64px to 70px
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.direction = "rtl";
       ctx.textBaseline = "middle";
       
-      // Draw text at the correct position - ADJUST POSITION DOWN SLIGHTLY
-      // Changed from 0.68 to 0.70 to move the text down slightly
-      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.70);
+      // Draw text at the correct position - Moved down slightly more
+      // Changed from 0.70 to 0.72 to move the text down further
+      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.72);
       
       // Convert to image data
       const imageData = canvas.toDataURL("image/png", 1.0);
@@ -78,7 +78,6 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       onImageGenerated(imageData);
     } catch (error) {
       console.error("Error generating image:", error);
-      // Even on error, we need to reset the loading state to allow retry
       onImageGenerated("error"); // Send error signal
     } finally {
       setIsRendering(false);
@@ -115,8 +114,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           className="absolute"
           style={{
             left: '80px',
-            // Moved down from 690px to 710px
-            top: '710px', 
+            // Moved down further from 710px to 730px
+            top: '730px', 
             width: '417px',
             height: '72px',
             display: 'flex',
@@ -128,8 +127,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           <div 
             className="font-swissra font-bold employee-name-text" 
             style={{ 
-              // Increased font size from 30px to 32px
-              fontSize: '32px', 
+              // Increased font size from 32px to 34px
+              fontSize: '34px', 
               color: '#000000',
               width: '100%',
               textAlign: 'center',
@@ -142,7 +141,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               fontWeight: 700,
-              textShadow: '0 0 2px rgba(0,0,0,0.8)'
+              textShadow: '0 0 1px rgba(0,0,0,0.4)'
             }}
           >
             {employeeName}
