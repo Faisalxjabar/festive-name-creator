@@ -53,7 +53,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
   if (!isLoaded) {
     return (
       <div className="w-[576px] h-[1024px] bg-eid-yellow/50 rounded-lg flex items-center justify-center">
-        <div className="animate-pulse text-black text-xl">جاري تحميل الصورة...</div>
+        <div className="animate-pulse text-black text-xl font-cairo">جاري تحميل الصورة...</div>
       </div>
     );
   }
@@ -82,7 +82,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
             justifyContent: 'center'
           }}
         >
-          <div className="text-black font-bold text-center font-arabic" style={{ fontSize: '32px' }}>
+          <div className="text-black font-bold text-center font-cairo" style={{ fontSize: '32px' }}>
             {employeeName}
           </div>
         </div>

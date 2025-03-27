@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -92,7 +92,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-arabic;
+    @apply bg-background text-foreground font-cairo;
   }
 }
 
@@ -103,13 +103,13 @@
 .eid-input {
   @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-lg px-4 py-3 
          text-black placeholder:text-black/70 focus:ring-2 focus:ring-eid-gold/50 focus:border-eid-gold/50
-         transition-all duration-300 w-full font-arabic text-lg;
+         transition-all duration-300 w-full font-cairo text-lg;
 }
 
 .eid-button {
   @apply bg-black text-white rounded-lg px-6 py-3 
          hover:bg-black/90 active:scale-[0.98] transition-all duration-300
-         shadow-lg hover:shadow-xl font-arabic text-lg tracking-wide;
+         shadow-lg hover:shadow-xl font-cairo text-lg tracking-wide;
 }
 
 /* Fix RTL issues for input fields */
@@ -123,3 +123,4 @@ input, textarea {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
 }
+
