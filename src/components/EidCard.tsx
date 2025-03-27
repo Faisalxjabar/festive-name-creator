@@ -82,7 +82,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
             justifyContent: 'center'
           }}
         >
-          <div className="text-black text-5xl font-bold text-center font-arabic">
+          <div className="text-black font-bold text-center font-arabic" style={{ fontSize: '32px' }}>
             {employeeName}
           </div>
         </div>
