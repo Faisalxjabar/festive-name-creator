@@ -12,10 +12,6 @@ const Header: React.FC = () => {
             alt="شعار الشركة" 
             className="h-12 w-auto"
           />
-          <div className="font-arabic">
-            <h1 className="text-black text-xl font-bold">معايدة عيد الفطر</h1>
-            <p className="text-black/70 text-sm">صمم بطاقة معايدة خاصة بك</p>
-          </div>
         </div>
         
         <div className="flex items-center gap-2">
