@@ -74,7 +74,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           className="absolute animate-fade-in"
           style={{
             left: '159px',
-            top: '1050px', // Changed position from 952px to 1050px to move it down below English text
+            top: '1300px', // Changed position from 1050px to 1300px to move it further down
             width: '834px',
             height: '144px',
             display: 'flex',
