@@ -74,7 +74,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           className="absolute animate-fade-in"
           style={{
             left: '159px',
-            top: '952px',
+            top: '1050px', // Changed position from 952px to 1050px to move it down below English text
             width: '834px',
             height: '144px',
             display: 'flex',
@@ -82,7 +82,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
             justifyContent: 'center'
           }}
         >
-          <div className="text-black text-4xl font-bold text-center font-arabic">
+          <div className="text-black text-5xl font-bold text-center font-arabic">
             {employeeName}
           </div>
         </div>
