@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import EidCard from "@/components/EidCard";
 import Header from "@/components/Header";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [employeeName, setEmployeeName] = useState("");
@@ -12,6 +13,7 @@ const Index = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const downloadLinkRef = useRef<HTMLAnchorElement>(null);
+  const isMobile = useIsMobile();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,26 +74,36 @@ const Index = () => {
     });
   };
 
+  // Calculate card scale based on screen size
+  const getCardScale = () => {
+    if (isMobile) {
+      return 0.35; // Smaller scale for mobile
+    } else {
+      return 0.5; // Original scale for desktop
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-eid-yellow/90 to-eid-gold/60">
       <Header />
       
-      <div className="container mx-auto py-10 px-4">
+      <div className="container mx-auto py-6 px-4 sm:py-10">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8 animate-fade-in">
-            <h2 className="text-3xl font-bold text-black mb-3 font-cairo">
+          <div className="text-center mb-6 sm:mb-8 animate-fade-in">
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2 sm:mb-3 font-cairo">
               بطاقة معايدة عيد الفطر
             </h2>
-            <p className="text-lg text-black/80 font-cairo animate-slide-up max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-black/80 font-cairo animate-slide-up max-w-2xl mx-auto px-2">
               أضف اسمك لبطاقة المعايدة وقم بتحميلها لمشاركتها مع العائلة والأصدقاء
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <div className="glass-panel p-8 rounded-xl shadow-xl animate-fade-in order-2 lg:order-1">
-              <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
+            {/* Form Panel - Full width on mobile, half on desktop */}
+            <div className="glass-panel p-5 sm:p-8 rounded-xl shadow-xl animate-fade-in w-full md:w-1/2 order-2 md:order-1">
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="block text-xl text-black font-cairo font-semibold">
+                  <label htmlFor="name" className="block text-lg sm:text-xl text-black font-cairo font-semibold">
                     اسم الموظف
                   </label>
                   <Input
@@ -101,7 +113,7 @@ const Index = () => {
                     placeholder="أدخل اسمك هنا"
                     className="eid-input"
                     dir="rtl"
-                    maxLength={18} // Reduced maximum length for better readability
+                    maxLength={18}
                   />
                   <p className="text-xs text-black/60 mt-1">
                     {employeeName.length > 0 && `${employeeName.length} / 18 حرف`}
@@ -132,29 +144,42 @@ const Index = () => {
                   download="eid_mubarak.png"
                 />
                 
-                <div className="mt-4 p-4 bg-white/10 rounded-lg border border-white/20">
-                  <p className="text-sm text-black/70 font-cairo text-center">
+                <div className="mt-4 p-3 sm:p-4 bg-white/10 rounded-lg border border-white/20">
+                  <p className="text-xs sm:text-sm text-black/70 font-cairo text-center">
                     يمكنك تحميل البطاقة بعد إنشائها ومشاركتها على وسائل التواصل الاجتماعي
                   </p>
                 </div>
               </form>
             </div>
 
-            <div className="relative rounded-xl shadow-2xl animate-fade-in order-1 lg:order-2 flex justify-center">
-              <div className="relative" style={{ width: 'auto', height: 'auto', maxWidth: '100%' }}>
+            {/* Card Preview - Centered, with better scaling */}
+            <div className="relative order-1 md:order-2 w-full md:w-1/2 flex justify-center items-center animate-fade-in">
+              <div className="relative mx-auto" style={{ width: 'auto', height: 'auto', maxWidth: '100%' }}>
                 {submittedName ? (
-                  <div className="overflow-hidden" style={{ width: '576px', height: '1024px', transform: 'scale(0.5)', transformOrigin: 'top center' }}>
+                  <div 
+                    className="overflow-hidden mx-auto" 
+                    style={{ 
+                      width: isMobile ? '202px' : '288px', 
+                      height: isMobile ? '358px' : '512px', 
+                      transform: `scale(${getCardScale()})`, 
+                      transformOrigin: 'top center' 
+                    }}
+                  >
                     <EidCard 
                       employeeName={submittedName} 
                       onImageGenerated={handleImageGenerated} 
                     />
                   </div>
                 ) : (
-                  <div className="text-center p-8 text-black font-cairo" style={{ width: '288px', height: '512px' }}>
-                    <div className="bg-black/5 p-6 rounded-xl backdrop-blur-sm">
-                      <p className="text-lg mb-2">أدخل اسمك واضغط على إنشاء البطاقة</p>
-                      <p className="text-sm opacity-70">سيظهر هنا معاينة للبطاقة</p>
-                    </div>
+                  <div 
+                    className="text-center p-4 sm:p-8 text-black font-cairo bg-black/5 rounded-xl backdrop-blur-sm mx-auto" 
+                    style={{ 
+                      width: isMobile ? '202px' : '288px', 
+                      height: isMobile ? '358px' : '512px'
+                    }}
+                  >
+                    <p className="text-base sm:text-lg mb-2">أدخل اسمك واضغط على إنشاء البطاقة</p>
+                    <p className="text-xs sm:text-sm opacity-70">سيظهر هنا معاينة للبطاقة</p>
                   </div>
                 )}
               </div>
@@ -163,7 +188,7 @@ const Index = () => {
         </div>
       </div>
       
-      <footer className="py-6 text-center text-black/60 font-cairo text-sm mt-8 border-t border-white/10 backdrop-blur-sm bg-white/5">
+      <footer className="py-4 sm:py-6 text-center text-black/60 font-cairo text-xs sm:text-sm mt-6 sm:mt-8 border-t border-white/10 backdrop-blur-sm bg-white/5">
         <div className="container mx-auto">
           <p>© {new Date().getFullYear()} جميع الحقوق محفوظة</p>
         </div>
