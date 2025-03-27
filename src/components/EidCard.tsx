@@ -56,16 +56,16 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       // Draw background image
       ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
       
-      // Add text
-      ctx.font = "bold 54px Cairo, sans-serif";
+      // Add text - INCREASED FONT SIZE from 54px to 60px
+      ctx.font = "bold 60px Cairo, sans-serif";
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.direction = "rtl";
       ctx.textBaseline = "middle";
       
       // Draw text at the correct position - ADJUSTED POSITION LOWER AGAIN
-      // Changed from 0.65 to 0.68 to move the text down more
-      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.68);
+      // Changed from 0.68 to 0.71 to move the text down more
+      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.71);
       
       // Convert to image data
       const imageData = canvas.toDataURL("image/png", 1.0);
@@ -115,8 +115,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           className="absolute"
           style={{
             left: '80px',
-            // Adjusted top position from 665px to 690px to move it lower
-            top: '690px',
+            // Adjusted top position from 690px to 720px to move it lower
+            top: '720px',
             width: '417px',
             height: '72px',
             display: 'flex',
@@ -128,7 +128,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           <div 
             className="font-cairo font-bold employee-name-text" 
             style={{ 
-              fontSize: '26px',
+              // Increased font size from 26px to 30px
+              fontSize: '30px',
               color: '#000000',
               width: '100%',
               textAlign: 'center',
