@@ -80,18 +80,25 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            direction: 'rtl' // ضمان اتجاه النص من اليمين إلى اليسار
+            direction: 'rtl'
           }}
         >
           <div 
-            className="font-cairo font-bold text-center" 
+            className="font-cairo font-bold" 
             style={{ 
-              fontSize: '32px', 
+              fontSize: '28px', // Reduced from 32px
               color: '#000000',
               width: '100%',
               textAlign: 'center',
               direction: 'rtl',
-              fontFamily: 'Cairo, sans-serif' // تأكيد استخدام خط Cairo
+              fontFamily: 'Cairo, sans-serif',
+              letterSpacing: '-0.5px', // Add slight negative letter spacing
+              wordSpacing: '0.5px', // Add slight word spacing
+              lineHeight: '1.2', // Control line height
+              padding: '0 10px', // Add some padding to prevent text from touching edges
+              maxWidth: '100%', // Ensure text doesn't overflow
+              overflow: 'hidden', // Hide overflowing text
+              textOverflow: 'ellipsis' // Show ellipsis for overflowing text
             }}
           >
             {employeeName}
