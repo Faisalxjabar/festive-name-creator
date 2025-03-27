@@ -28,53 +28,86 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       const html2canvasModule = await import("html2canvas");
       const html2canvas = html2canvasModule.default;
       
-      // Use a temporary div that we'll style exactly as needed for the capture
+      // Create a completely new div for rendering
       const tempDiv = document.createElement('div');
       tempDiv.style.position = 'absolute';
-      tempDiv.style.top = '-9999px';
       tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '-9999px';
+      tempDiv.style.width = '576px';
+      tempDiv.style.height = '1024px';
       document.body.appendChild(tempDiv);
       
-      // Clone our card element into this temporary div
-      tempDiv.innerHTML = cardRef.current.outerHTML;
-      const tempCard = tempDiv.firstChild as HTMLElement;
+      // Create a clean card element with proper styling
+      tempDiv.innerHTML = `
+        <div 
+          style="
+            width: 576px; 
+            height: 1024px; 
+            background-image: url('/lovable-uploads/3ca3041a-3d6f-42b5-bd45-0ca8aa506516.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            font-family: 'Cairo', sans-serif;
+          "
+        >
+          <div 
+            style="
+              position: absolute;
+              left: 80px;
+              top: 650px;
+              width: 417px;
+              height: 72px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              direction: rtl;
+              text-align: center;
+            "
+          >
+            <div 
+              style="
+                font-family: 'Cairo', sans-serif;
+                font-size: 26px;
+                font-weight: 700;
+                color: #000000;
+                text-shadow: 0 0 2px rgba(0,0,0,0.8);
+                letter-spacing: -0.5px;
+                width: 100%;
+                text-align: center;
+                direction: rtl;
+                line-height: 1.2;
+                padding: 0 10px;
+              "
+            >${employeeName}</div>
+          </div>
+        </div>
+      `;
       
-      // Make sure the clone has the same dimensions
-      tempCard.style.width = '576px';
-      tempCard.style.height = '1024px';
+      // Force load the Cairo font before capturing
+      const fontLoader = document.createElement('div');
+      fontLoader.style.fontFamily = 'Cairo, sans-serif';
+      fontLoader.style.position = 'absolute';
+      fontLoader.style.left = '-9999px';
+      fontLoader.style.top = '-9999px';
+      fontLoader.textContent = employeeName;
+      document.body.appendChild(fontLoader);
       
-      // Find and modify the name element in the clone
-      const nameElement = tempCard.querySelector('.employee-name-text');
-      if (nameElement) {
-        const nameStyle = nameElement as HTMLElement;
-        nameStyle.style.opacity = '1';
-        nameStyle.style.visibility = 'visible';
-        nameStyle.style.display = 'block';
-        nameStyle.style.fontSize = '26px';
-        nameStyle.style.fontWeight = '700';
-        nameStyle.style.color = '#000000';
-        nameStyle.style.textShadow = '0 0 2px rgba(0,0,0,0.8)';
-        nameStyle.style.letterSpacing = '-0.5px';
-        nameStyle.textContent = employeeName; // Ensure name is set
-        console.log("Name element styled and content set:", nameStyle.textContent);
-      } else {
-        console.error("Name element not found in cloned card");
-      }
+      // Wait briefly for fonts to apply
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Capture the modified clone
-      const canvas = await html2canvas(tempCard, {
+      // Capture the image
+      const canvas = await html2canvas(tempDiv.firstChild as HTMLElement, {
         scale: 8, // Very high quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
-        logging: true,
-        onclone: (documentClone) => {
-          console.log("Document cloned for html2canvas");
-        }
+        logging: true
       });
       
-      // Clean up the temporary element
+      // Clean up the temporary elements
       document.body.removeChild(tempDiv);
+      document.body.removeChild(fontLoader);
       
       const imageData = canvas.toDataURL("image/png", 1.0);
       console.log("Image generated successfully");
