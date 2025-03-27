@@ -22,46 +22,62 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
     
     try {
       setIsRendering(true);
+      console.log("Starting image generation with name:", employeeName);
       
       // Wait for HTML2Canvas to be loaded dynamically
       const html2canvasModule = await import("html2canvas");
       const html2canvas = html2canvasModule.default;
       
-      // Create a deep clone of the card to modify for rendering
-      const cardClone = cardRef.current.cloneNode(true) as HTMLElement;
-      const nameElement = cardClone.querySelector('.employee-name-text');
+      // Use a temporary div that we'll style exactly as needed for the capture
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.top = '-9999px';
+      tempDiv.style.left = '-9999px';
+      document.body.appendChild(tempDiv);
       
-      // Apply styles directly to ensure text is visible in the capture
+      // Clone our card element into this temporary div
+      tempDiv.innerHTML = cardRef.current.outerHTML;
+      const tempCard = tempDiv.firstChild as HTMLElement;
+      
+      // Make sure the clone has the same dimensions
+      tempCard.style.width = '576px';
+      tempCard.style.height = '1024px';
+      
+      // Find and modify the name element in the clone
+      const nameElement = tempCard.querySelector('.employee-name-text');
       if (nameElement) {
-        (nameElement as HTMLElement).style.opacity = '1';
-        (nameElement as HTMLElement).style.visibility = 'visible';
-        (nameElement as HTMLElement).style.display = 'block';
+        const nameStyle = nameElement as HTMLElement;
+        nameStyle.style.opacity = '1';
+        nameStyle.style.visibility = 'visible';
+        nameStyle.style.display = 'block';
+        nameStyle.style.fontSize = '26px';
+        nameStyle.style.fontWeight = '700';
+        nameStyle.style.color = '#000000';
+        nameStyle.style.textShadow = '0 0 2px rgba(0,0,0,0.8)';
+        nameStyle.style.letterSpacing = '-0.5px';
+        nameStyle.textContent = employeeName; // Ensure name is set
+        console.log("Name element styled and content set:", nameStyle.textContent);
+      } else {
+        console.error("Name element not found in cloned card");
       }
       
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 6, // Increased for much higher quality
+      // Capture the modified clone
+      const canvas = await html2canvas(tempCard, {
+        scale: 8, // Very high quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
-        logging: false,
+        logging: true,
         onclone: (documentClone) => {
-          // Ensure text is visible and properly styled in the cloned document for capturing
-          const nameElement = documentClone.querySelector('.employee-name-text');
-          if (nameElement) {
-            const nameStyle = nameElement as HTMLElement;
-            nameStyle.style.opacity = '1';
-            nameStyle.style.visibility = 'visible';
-            nameStyle.style.display = 'block';
-            nameStyle.style.fontSize = '26px';
-            nameStyle.style.fontWeight = '700';
-            nameStyle.style.color = '#000000';
-            nameStyle.style.textShadow = '0px 0px 1px rgba(0,0,0,0.8)';
-            nameStyle.style.letterSpacing = '-0.5px';
-          }
+          console.log("Document cloned for html2canvas");
         }
       });
       
+      // Clean up the temporary element
+      document.body.removeChild(tempDiv);
+      
       const imageData = canvas.toDataURL("image/png", 1.0);
+      console.log("Image generated successfully");
       onImageGenerated(imageData);
     } catch (error) {
       console.error("Error generating image:", error);
@@ -126,7 +142,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               fontWeight: 700,
-              textShadow: '0 0 1px rgba(0,0,0,0.8)' // Darker text shadow for better visibility
+              textShadow: '0 0 2px rgba(0,0,0,0.8)'
             }}
           >
             {employeeName}
