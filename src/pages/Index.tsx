@@ -84,13 +84,13 @@ const Index = () => {
   const getCardDimensions = () => {
     if (isMobile) {
       return {
-        width: '300px',
-        height: '533px'
+        width: '320px',  // Increased for better visibility
+        height: '568px'  // Adjusted to maintain aspect ratio
       };
     } else {
       return {
-        width: '350px', 
-        height: '622px'
+        width: '375px', // Increased for better visibility
+        height: '667px' // Adjusted to maintain aspect ratio
       };
     }
   };
@@ -186,9 +186,18 @@ const Index = () => {
                 ) : (
                   <div 
                     className="text-center p-4 sm:p-8 text-black font-cairo bg-black/5 w-full h-full flex flex-col items-center justify-center backdrop-blur-sm"
+                    style={{ 
+                      backgroundImage: `url(/lovable-uploads/f2da7eb5-1b03-460a-ba3b-21ba5f1b32e2.png)`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundBlendMode: 'overlay'
+                    }}
                   >
-                    <p className="text-base sm:text-lg mb-2">أدخل اسمك واضغط على إنشاء البطاقة</p>
-                    <p className="text-xs sm:text-sm opacity-70">سيظهر هنا معاينة للبطاقة</p>
+                    <div className="bg-white/80 p-4 rounded-lg backdrop-blur-sm">
+                      <p className="text-base sm:text-lg mb-2">أدخل اسمك واضغط على إنشاء البطاقة</p>
+                      <p className="text-xs sm:text-sm opacity-70">سيظهر هنا معاينة للبطاقة</p>
+                    </div>
                   </div>
                 )}
               </div>

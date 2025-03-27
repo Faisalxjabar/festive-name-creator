@@ -15,7 +15,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
   // Load the background image on component mount
   useEffect(() => {
     const image = new Image();
-    image.src = "/lovable-uploads/3ca3041a-3d6f-42b5-bd45-0ca8aa506516.png";
+    image.src = "/lovable-uploads/f2da7eb5-1b03-460a-ba3b-21ba5f1b32e2.png";
     image.crossOrigin = "Anonymous";
     image.onload = () => {
       setIsLoaded(true);
@@ -46,15 +46,15 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       // Draw background image
       ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
       
-      // Add text - Swissra font with increased size
-      ctx.font = "bold 70px Swissra, Cairo, sans-serif";
+      // Add text - Swissra font with increased size for better visibility
+      ctx.font = "bold 74px Swissra, Cairo, sans-serif";
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.direction = "rtl";
       ctx.textBaseline = "middle";
       
-      // Draw text at the correct position
-      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.72);
+      // Draw text at the correct position - adjusted for the new image
+      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.78);
       
       // Convert to image data
       const imageData = canvas.toDataURL("image/png", 1.0);
@@ -89,7 +89,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       ref={cardRef} 
       className="relative w-full h-full overflow-hidden card-image"
       style={{ 
-        backgroundImage: `url(/lovable-uploads/3ca3041a-3d6f-42b5-bd45-0ca8aa506516.png)`,
+        backgroundImage: `url(/lovable-uploads/f2da7eb5-1b03-460a-ba3b-21ba5f1b32e2.png)`,
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -101,7 +101,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           style={{
             left: '0',
             right: '0',
-            top: '72%', 
+            top: '78%', // Adjusted for the new image
             width: '100%',
             display: 'flex',
             alignItems: 'center',
