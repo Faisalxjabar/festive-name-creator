@@ -56,16 +56,16 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       // Draw background image
       ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
       
-      // Add text - Change font to Swissra
-      ctx.font = "bold 60px Swissra, Cairo, sans-serif";
+      // Add text - Change font to Swissra and increase size
+      ctx.font = "bold 64px Swissra, Cairo, sans-serif"; // Increased from 60px to 64px
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.direction = "rtl";
       ctx.textBaseline = "middle";
       
-      // Draw text at the correct position - ADJUSTED POSITION HIGHER
-      // Changed from 0.71 to 0.68 to move the text up slightly
-      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.68);
+      // Draw text at the correct position - ADJUST POSITION DOWN SLIGHTLY
+      // Changed from 0.68 to 0.70 to move the text down slightly
+      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.70);
       
       // Convert to image data
       const imageData = canvas.toDataURL("image/png", 1.0);
@@ -115,8 +115,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           className="absolute"
           style={{
             left: '80px',
-            // Adjusted top position from 720px to 690px to move it higher
-            top: '690px',
+            // Moved down from 690px to 710px
+            top: '710px', 
             width: '417px',
             height: '72px',
             display: 'flex',
@@ -128,8 +128,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           <div 
             className="font-swissra font-bold employee-name-text" 
             style={{ 
-              // Increased font size from 26px to 30px
-              fontSize: '30px',
+              // Increased font size from 30px to 32px
+              fontSize: '32px', 
               color: '#000000',
               width: '100%',
               textAlign: 'center',
