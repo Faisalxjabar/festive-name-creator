@@ -39,6 +39,10 @@ PORT=${1:-8080}
 # Set up the PM2 configuration
 echo -e "${BLUE}Setting up PM2 configuration...${NC}"
 
+# Domain configuration
+DOMAIN="eid.b-k.coffee"
+echo -e "${BLUE}Configuring for domain: ${GREEN}$DOMAIN${NC}"
+
 cat > ecosystem.config.js << EOL
 module.exports = {
   apps: [{
@@ -73,12 +77,16 @@ pm2 startup
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}Deployment completed successfully!${NC}"
 echo -e "${GREEN}The application is now running at:${NC}"
-echo -e "${BLUE}http://localhost:$PORT${NC}"
+echo -e "${BLUE}http://$DOMAIN${NC}"
 echo -e "${GREEN}PM2 commands:${NC}"
 echo -e "${BLUE}  View logs: pm2 logs festive-name-creator${NC}"
 echo -e "${BLUE}  Stop app: pm2 stop festive-name-creator${NC}"
 echo -e "${BLUE}  Restart app: pm2 restart festive-name-creator${NC}"
 echo -e "${BLUE}  Monitor: pm2 monit${NC}"
 echo -e "${GREEN}==========================================${NC}"
+
+# Add note about domain configuration
+echo -e "${BLUE}Note:${NC} Make sure your domain ${GREEN}$DOMAIN${NC} is pointing to this server's IP address"
+echo -e "${BLUE}and that you have configured your web server (Nginx/Apache) to proxy requests to port ${PORT}.${NC}"
 
 exit 0

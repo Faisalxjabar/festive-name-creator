@@ -10,8 +10,11 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+DOMAIN="eid.b-k.coffee"
+
 echo -e "${BLUE}===================================================${NC}"
 echo -e "${GREEN}مرحبًا بك في سكربت تثبيت مشروع بطاقة معايدة عيد الفطر${NC}"
+echo -e "${BLUE}للدومين: ${GREEN}$DOMAIN${NC}"
 echo -e "${BLUE}===================================================${NC}"
 
 # Check if Node.js is installed
@@ -94,14 +97,40 @@ fi
 # Determine port to use (default: 8080)
 PORT=${1:-8080}
 
+# Add some additional info about domain configuration
+echo -e "${BLUE}Domain configuration for ${GREEN}$DOMAIN${NC}:"
+echo -e "${BLUE}You may need to set up a web server like Nginx or Apache to proxy requests to this application.${NC}"
+
+cat > nginx-example.conf << EOL
+# Example Nginx configuration for $DOMAIN
+server {
+    listen 80;
+    server_name $DOMAIN;
+
+    location / {
+        proxy_pass http://localhost:$PORT;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}
+EOL
+
+echo -e "${BLUE}Created example Nginx configuration in ${GREEN}nginx-example.conf${NC}"
+echo -e "${BLUE}You can use this file to set up Nginx with your domain.${NC}"
+
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}Setup completed successfully!${NC}"
 echo -e "${GREEN}To start the application, run:${NC}"
 echo -e "${BLUE}cd $REPO_DIR && npm run dev${NC}"
 echo -e "${GREEN}OR to serve the production build:${NC}"
 echo -e "${BLUE}cd $REPO_DIR && serve -s dist -l $PORT${NC}"
+echo -e "${GREEN}For production deployment, use:${NC}"
+echo -e "${BLUE}./deploy.sh${NC}"
 echo -e "${GREEN}The application will be available at:${NC}"
-echo -e "${BLUE}http://localhost:$PORT${NC}"
+echo -e "${BLUE}http://$DOMAIN${NC} (after configuring your web server)"
 echo -e "${GREEN}==========================================${NC}"
 
 # Ask if the user wants to start the server now
