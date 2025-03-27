@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +14,6 @@ const Index = () => {
   const downloadLinkRef = useRef<HTMLAnchorElement>(null);
   const isMobile = useIsMobile();
 
-  // Clear any previous state on component mount
   useEffect(() => {
     setGeneratedImage(null);
     setSubmittedName("");
@@ -32,7 +30,6 @@ const Index = () => {
       return;
     }
 
-    // Validate name length to prevent overflow
     if (employeeName.length > 18) {
       toast({
         title: "تنبيه",
@@ -42,7 +39,6 @@ const Index = () => {
 
     setIsLoading(true);
     setSubmittedName(employeeName);
-    // البطاقة ستُنشأ تلقائياً عندما يتغير الاسم
   };
 
   const handleImageGenerated = (imageData: string) => {
@@ -80,17 +76,16 @@ const Index = () => {
     });
   };
 
-  // Calculate card dimensions based on screen size
   const getCardDimensions = () => {
     if (isMobile) {
       return {
-        width: '320px',  // Increased for better visibility
-        height: '568px'  // Adjusted to maintain aspect ratio
+        width: '320px',
+        height: '568px'
       };
     } else {
       return {
-        width: '375px', // Increased for better visibility
-        height: '667px' // Adjusted to maintain aspect ratio
+        width: '375px',
+        height: '667px'
       };
     }
   };
@@ -113,7 +108,6 @@ const Index = () => {
           </div>
 
           <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
-            {/* Form Panel - Full width on mobile, half on desktop */}
             <div className="glass-panel p-5 sm:p-8 rounded-xl shadow-xl animate-fade-in w-full md:w-1/2 order-2 md:order-1">
               <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 <div className="space-y-2">
@@ -166,7 +160,6 @@ const Index = () => {
               </form>
             </div>
 
-            {/* Card Preview - Centered, with larger size */}
             <div className="relative order-1 md:order-2 w-full md:w-1/2 flex justify-center items-center animate-fade-in">
               <div className="relative mx-auto overflow-hidden rounded-xl shadow-xl border-2 border-white/30" 
                    style={{ width: cardDimensions.width, height: cardDimensions.height }}>
@@ -208,7 +201,7 @@ const Index = () => {
       
       <footer className="py-4 sm:py-6 text-center text-black/60 font-cairo text-xs sm:text-sm mt-6 sm:mt-8 border-t border-white/10 backdrop-blur-sm bg-white/5">
         <div className="container mx-auto">
-          <p>© {new Date().getFullYear()} جميع الحقوق محفوظة</p>
+          <p>© {new Date().getFullYear()} جميع الحقوق محفوظة لـ Black Knight</p>
         </div>
       </footer>
     </div>
