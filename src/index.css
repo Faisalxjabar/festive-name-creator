@@ -1,5 +1,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
+/* Add the Swissra font using @font-face */
+@font-face {
+  font-family: 'Swissra';
+  src: url('/fonts/Swissra-Normal.woff2') format('woff2'),
+       url('/fonts/Swissra-Normal.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -128,4 +137,9 @@ input, textarea {
 .card-image {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+}
+
+/* Swissra Font Class */
+.font-swissra {
+  font-family: 'Swissra', 'Cairo', sans-serif;
 }

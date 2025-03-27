@@ -56,8 +56,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       // Draw background image
       ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
       
-      // Add text - INCREASED FONT SIZE from 54px to 60px
-      ctx.font = "bold 60px Cairo, sans-serif";
+      // Add text - Change font to Swissra
+      ctx.font = "bold 60px Swissra, Cairo, sans-serif";
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.direction = "rtl";
@@ -126,7 +126,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           }}
         >
           <div 
-            className="font-cairo font-bold employee-name-text" 
+            className="font-swissra font-bold employee-name-text" 
             style={{ 
               // Increased font size from 26px to 30px
               fontSize: '30px',
@@ -134,7 +134,6 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
               width: '100%',
               textAlign: 'center',
               direction: 'rtl',
-              fontFamily: 'Cairo, sans-serif',
               letterSpacing: '-0.5px',
               wordSpacing: '0.5px',
               lineHeight: '1.2',

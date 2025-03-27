@@ -22,6 +22,7 @@ export default {
 			fontFamily: {
 				arabic: ["'Amiri'", "'Noto Sans Arabic'", "sans-serif"],
 				cairo: ["'Cairo'", "sans-serif"],
+				swissra: ["'Swissra'", "'Cairo'", "sans-serif"],
 			},
 			colors: {
 				eid: {
