@@ -111,12 +111,30 @@ npm install
 echo -e "${BLUE}Building the project...${NC}"
 npm run build
 
-# Install PM2 if not already installed
-if ! [ -x "$(command -v pm2)" ]; then
-  echo -e "${BLUE}Installing PM2 for process management...${NC}"
-  npm install -g pm2
+# Install PM2 locally if not already installed globally
+echo -e "${BLUE}Installing PM2 for process management...${NC}"
+if ! command -v pm2 &> /dev/null; then
+  echo -e "${BLUE}PM2 not found globally. Trying to install globally with sudo...${NC}"
+  if command -v sudo &> /dev/null; then
+    sudo npm install -g pm2
+    if [ $? -ne 0 ]; then
+      echo -e "${BLUE}Global installation failed. Installing PM2 locally as a project dependency...${NC}"
+      npm install --save-dev pm2
+      # Create a shortcut to local PM2
+      echo -e "${BLUE}Creating a local PM2 alias...${NC}"
+      echo 'alias pm2="npx pm2"' >> ~/.bashrc
+      source ~/.bashrc
+    fi
+  else
+    echo -e "${BLUE}Sudo not available. Installing PM2 locally as a project dependency...${NC}"
+    npm install --save-dev pm2
+    # Create a shortcut to local PM2
+    echo -e "${BLUE}Creating a local PM2 alias...${NC}"
+    echo 'alias pm2="npx pm2"' >> ~/.bashrc
+    source ~/.bashrc
+  fi
 else
-  echo -e "${GREEN}PM2 is already installed.${NC}"
+  echo -e "${GREEN}PM2 is already installed globally.${NC}"
 fi
 
 # Create PM2 configuration file
@@ -136,26 +154,33 @@ module.exports = {
 EOL
 
 # Install serve if not already installed
-if ! [ -x "$(command -v serve)" ]; then
-  echo -e "${BLUE}Installing serve...${NC}"
-  npm install -g serve
+echo -e "${BLUE}Installing serve...${NC}"
+npm install --save-dev serve
+
+# Check if PM2 is installed and accessible
+PM2_CMD="pm2"
+if ! command -v pm2 &> /dev/null; then
+  PM2_CMD="npx pm2"
+  echo -e "${BLUE}Using local PM2 via npx...${NC}"
 fi
 
 # Start or restart the application with PM2
-if pm2 show festive-name-creator > /dev/null 2>&1; then
+if $PM2_CMD list | grep -q "festive-name-creator"; then
   echo -e "${BLUE}Restarting the application with PM2...${NC}"
-  pm2 restart festive-name-creator
+  $PM2_CMD restart festive-name-creator
 else
   echo -e "${BLUE}Starting the application with PM2...${NC}"
-  pm2 start ecosystem.config.js
+  $PM2_CMD start ecosystem.config.js
 fi
 
 # Save the PM2 process list
-pm2 save
+$PM2_CMD save || echo -e "${RED}Failed to save PM2 process list. This is OK for local installations.${NC}"
 
-# Set up PM2 to start on system boot
-echo -e "${BLUE}Setting up PM2 to start on system boot...${NC}"
-pm2 startup
+# Set up PM2 to start on system boot (only for global PM2 installations)
+if command -v pm2 &> /dev/null; then
+  echo -e "${BLUE}Setting up PM2 to start on system boot...${NC}"
+  $PM2_CMD startup || echo -e "${RED}Failed to set up PM2 startup. This is OK for local installations.${NC}"
+fi
 
 # Create an example Nginx configuration
 echo -e "${BLUE}Creating example Nginx configuration...${NC}"
