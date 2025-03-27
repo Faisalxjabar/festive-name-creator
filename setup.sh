@@ -70,13 +70,27 @@ fi
 CURRENT_DIR=$(pwd)
 echo -e "${BLUE}Installing in current directory: ${GREEN}$CURRENT_DIR${NC}"
 
+# Check directory permissions and fix if needed
+if [ ! -w "$CURRENT_DIR" ]; then
+  echo -e "${RED}No write permission to current directory. Trying with sudo...${NC}"
+  sudo chmod u+w "$CURRENT_DIR" || { 
+    echo -e "${RED}Failed to set write permissions. Please run this script with sudo or fix permissions manually.${NC}"; 
+    exit 1; 
+  }
+fi
+
 # Clone the repository content directly to current directory
 echo -e "${BLUE}Cloning the repository content to current directory...${NC}"
-git clone "$REPO_URL" temp_clone --depth=1
-if [ $? -ne 0 ]; then
+# Create a temporary directory that we have permission to write to
+TEMP_CLONE_DIR="/tmp/temp_festive_clone_$$"
+git clone "$REPO_URL" "$TEMP_CLONE_DIR" --depth=1 || {
   echo -e "${RED}Failed to clone repository. Creating basic project structure...${NC}"
-  mkdir -p public src
-  cat > public/index.html << EOL
+  # Make sure we can create files in the current directory
+  sudo mkdir -p public src || true
+  sudo chmod -R 775 public src || true
+  
+  # Create a basic index.html file
+  sudo tee public/index.html > /dev/null << EOL
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -92,12 +106,18 @@ if [ $? -ne 0 ]; then
   </body>
 </html>
 EOL
-else
-  # Move all files from the temp clone to current directory
+}
+
+# If we successfully cloned the repo, copy files to current directory
+if [ -d "$TEMP_CLONE_DIR" ]; then
   echo -e "${BLUE}Moving files to current directory...${NC}"
-  mv temp_clone/* .
-  mv temp_clone/.* . 2>/dev/null || true
-  rm -rf temp_clone
+  # Copy all files including hidden ones
+  sudo cp -a "$TEMP_CLONE_DIR/." "$CURRENT_DIR/"
+  # Clean up temp directory
+  sudo rm -rf "$TEMP_CLONE_DIR"
+  # Fix permissions
+  sudo chown -R $(whoami) "$CURRENT_DIR"
+  sudo chmod -R 775 "$CURRENT_DIR"
 fi
 
 FULL_PATH=$CURRENT_DIR
@@ -154,14 +174,14 @@ npm install --save-dev serve
 # Start or restart the application with PM2
 if $PM2_CMD list | grep -q "festive-name-creator"; then
   echo -e "${BLUE}Restarting the application with PM2...${NC}"
-  $PM2_CMD restart festive-name-creator
+  sudo $PM2_CMD restart festive-name-creator
 else
   echo -e "${BLUE}Starting the application with PM2...${NC}"
-  $PM2_CMD start ecosystem.config.js
+  sudo $PM2_CMD start ecosystem.config.js
 fi
 
 # Save the PM2 process list
-$PM2_CMD save || echo -e "${RED}Failed to save PM2 process list. This is OK for local installations.${NC}"
+sudo $PM2_CMD save || echo -e "${RED}Failed to save PM2 process list. This is OK for local installations.${NC}"
 
 # Set up PM2 to start on system boot (only for global PM2 installations)
 if [ "$PM2_CMD" = "pm2" ]; then
@@ -196,10 +216,10 @@ echo -e "${BLUE}ملاحظة: تأكد من أن الدومين ${GREEN}$DOMAIN$
 echo -e "${GREEN}مسار المشروع الكامل: ${BLUE}$FULL_PATH${NC}"
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}أوامر PM2 المفيدة:${NC}"
-echo -e "${BLUE}  عرض السجلات: $PM2_CMD logs festive-name-creator${NC}"
-echo -e "${BLUE}  إيقاف التطبيق: $PM2_CMD stop festive-name-creator${NC}"
-echo -e "${BLUE}  إعادة تشغيل التطبيق: $PM2_CMD restart festive-name-creator${NC}"
-echo -e "${BLUE}  مراقبة: $PM2_CMD monit${NC}"
+echo -e "${BLUE}  عرض السجلات: sudo $PM2_CMD logs festive-name-creator${NC}"
+echo -e "${BLUE}  إيقاف التطبيق: sudo $PM2_CMD stop festive-name-creator${NC}"
+echo -e "${BLUE}  إعادة تشغيل التطبيق: sudo $PM2_CMD restart festive-name-creator${NC}"
+echo -e "${BLUE}  مراقبة: sudo $PM2_CMD monit${NC}"
 echo -e "${GREEN}==========================================${NC}"
 
 exit 0
