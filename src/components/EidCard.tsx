@@ -78,7 +78,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
 
   if (!isLoaded) {
     return (
-      <div className="w-[576px] h-[1024px] bg-eid-yellow/50 rounded-lg flex items-center justify-center">
+      <div className="w-full h-full bg-eid-yellow/50 rounded-lg flex items-center justify-center">
         <div className="animate-pulse text-black text-xl font-cairo">جاري تحميل الصورة...</div>
       </div>
     );
@@ -87,7 +87,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
   return (
     <div 
       ref={cardRef} 
-      className="relative w-[576px] h-[1024px] overflow-hidden card-image"
+      className="relative w-full h-full overflow-hidden card-image"
       style={{ 
         backgroundImage: `url(/lovable-uploads/3ca3041a-3d6f-42b5-bd45-0ca8aa506516.png)`,
         backgroundSize: 'contain',
@@ -99,10 +99,10 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
         <div 
           className="absolute"
           style={{
-            left: '80px',
-            top: '730px', 
-            width: '417px',
-            height: '72px',
+            left: '0',
+            right: '0',
+            top: '72%', 
+            width: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -112,9 +112,9 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           <div 
             className="font-swissra font-bold employee-name-text" 
             style={{ 
-              fontSize: '34px', 
+              fontSize: 'min(34px, 6vw)', 
               color: '#000000',
-              width: '100%',
+              width: '70%',
               textAlign: 'center',
               direction: 'rtl',
               letterSpacing: '-0.5px',

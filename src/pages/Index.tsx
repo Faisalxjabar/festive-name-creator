@@ -80,14 +80,22 @@ const Index = () => {
     });
   };
 
-  // Calculate card scale based on screen size
-  const getCardScale = () => {
+  // Calculate card dimensions based on screen size
+  const getCardDimensions = () => {
     if (isMobile) {
-      return 0.35; // Smaller scale for mobile
+      return {
+        width: '300px',
+        height: '533px'
+      };
     } else {
-      return 0.5; // Original scale for desktop
+      return {
+        width: '350px', 
+        height: '622px'
+      };
     }
   };
+
+  const cardDimensions = getCardDimensions();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-eid-yellow/90 to-eid-gold/60">
@@ -158,39 +166,26 @@ const Index = () => {
               </form>
             </div>
 
-            {/* Card Preview - Centered, with better scaling */}
+            {/* Card Preview - Centered, with larger size */}
             <div className="relative order-1 md:order-2 w-full md:w-1/2 flex justify-center items-center animate-fade-in">
-              <div className="relative mx-auto" style={{ width: 'auto', height: 'auto', maxWidth: '100%' }}>
+              <div className="relative mx-auto overflow-hidden rounded-xl shadow-xl border-2 border-white/30" 
+                   style={{ width: cardDimensions.width, height: cardDimensions.height }}>
                 {submittedName ? (
-                  <div 
-                    className="overflow-hidden mx-auto border border-white/20 shadow-lg rounded-lg" 
-                    style={{ 
-                      width: isMobile ? '202px' : '288px', 
-                      height: isMobile ? '358px' : '512px', 
-                      transform: `scale(${getCardScale()})`, 
-                      transformOrigin: 'top center' 
-                    }}
-                  >
-                    {generatedImage && generatedImage !== "error" ? (
-                      <img 
-                        src={generatedImage} 
-                        alt="بطاقة عيد" 
-                        className="w-full h-full object-contain"
-                      />
-                    ) : (
-                      <EidCard 
-                        employeeName={submittedName} 
-                        onImageGenerated={handleImageGenerated} 
-                      />
-                    )}
-                  </div>
+                  generatedImage && generatedImage !== "error" ? (
+                    <img 
+                      src={generatedImage} 
+                      alt="بطاقة عيد" 
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <EidCard 
+                      employeeName={submittedName} 
+                      onImageGenerated={handleImageGenerated} 
+                    />
+                  )
                 ) : (
                   <div 
-                    className="text-center p-4 sm:p-8 text-black font-cairo bg-black/5 rounded-xl backdrop-blur-sm mx-auto border border-white/20" 
-                    style={{ 
-                      width: isMobile ? '202px' : '288px', 
-                      height: isMobile ? '358px' : '512px'
-                    }}
+                    className="text-center p-4 sm:p-8 text-black font-cairo bg-black/5 w-full h-full flex flex-col items-center justify-center backdrop-blur-sm"
                   >
                     <p className="text-base sm:text-lg mb-2">أدخل اسمك واضغط على إنشاء البطاقة</p>
                     <p className="text-xs sm:text-sm opacity-70">سيظهر هنا معاينة للبطاقة</p>
