@@ -93,6 +93,11 @@
 
   body {
     @apply bg-background text-foreground font-cairo;
+    direction: rtl;
+  }
+
+  html {
+    font-family: 'Cairo', sans-serif;
   }
 }
 
@@ -116,6 +121,7 @@
 input, textarea {
   direction: rtl;
   text-align: right;
+  font-family: 'Cairo', sans-serif;
 }
 
 /* Customize image rendering */
@@ -123,4 +129,3 @@ input, textarea {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
 }
-

@@ -79,10 +79,21 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
             height: '72px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            direction: 'rtl' // ضمان اتجاه النص من اليمين إلى اليسار
           }}
         >
-          <div className="text-black font-bold text-center font-cairo" style={{ fontSize: '32px' }}>
+          <div 
+            className="font-cairo font-bold text-center" 
+            style={{ 
+              fontSize: '32px', 
+              color: '#000000',
+              width: '100%',
+              textAlign: 'center',
+              direction: 'rtl',
+              fontFamily: 'Cairo, sans-serif' // تأكيد استخدام خط Cairo
+            }}
+          >
             {employeeName}
           </div>
         </div>
