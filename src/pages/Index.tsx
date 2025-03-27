@@ -163,7 +163,7 @@ const Index = () => {
               <div className="relative mx-auto" style={{ width: 'auto', height: 'auto', maxWidth: '100%' }}>
                 {submittedName ? (
                   <div 
-                    className="overflow-hidden mx-auto" 
+                    className="overflow-hidden mx-auto border border-white/20 shadow-lg rounded-lg" 
                     style={{ 
                       width: isMobile ? '202px' : '288px', 
                       height: isMobile ? '358px' : '512px', 
@@ -171,14 +171,22 @@ const Index = () => {
                       transformOrigin: 'top center' 
                     }}
                   >
-                    <EidCard 
-                      employeeName={submittedName} 
-                      onImageGenerated={handleImageGenerated} 
-                    />
+                    {generatedImage && generatedImage !== "error" ? (
+                      <img 
+                        src={generatedImage} 
+                        alt="بطاقة عيد" 
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <EidCard 
+                        employeeName={submittedName} 
+                        onImageGenerated={handleImageGenerated} 
+                      />
+                    )}
                   </div>
                 ) : (
                   <div 
-                    className="text-center p-4 sm:p-8 text-black font-cairo bg-black/5 rounded-xl backdrop-blur-sm mx-auto" 
+                    className="text-center p-4 sm:p-8 text-black font-cairo bg-black/5 rounded-xl backdrop-blur-sm mx-auto border border-white/20" 
                     style={{ 
                       width: isMobile ? '202px' : '288px', 
                       height: isMobile ? '358px' : '512px'
