@@ -63,8 +63,9 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       ctx.direction = "rtl";
       ctx.textBaseline = "middle";
       
-      // Draw text at the correct position
-      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.635);
+      // Draw text at the correct position - ADJUSTED POSITION LOWER
+      // Changed from 0.635 to 0.65 to move the text down slightly
+      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.65);
       
       // Convert to image data
       const imageData = canvas.toDataURL("image/png", 1.0);
@@ -114,7 +115,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           className="absolute"
           style={{
             left: '80px',
-            top: '650px',
+            // Adjusted top position from 650px to 665px to move it lower
+            top: '665px',
             width: '417px',
             height: '72px',
             display: 'flex',
