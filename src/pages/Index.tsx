@@ -91,10 +91,10 @@ const Index = () => {
                     placeholder="أدخل اسمك هنا"
                     className="eid-input"
                     dir="rtl"
-                    maxLength={40} // Set maximum length
+                    maxLength={30} // Reduced maximum length for better readability
                   />
                   <p className="text-xs text-black/60 mt-1">
-                    {employeeName.length > 0 && `${employeeName.length} / 40 حرف`}
+                    {employeeName.length > 0 && `${employeeName.length} / 30 حرف`}
                   </p>
                 </div>
                 <Button 

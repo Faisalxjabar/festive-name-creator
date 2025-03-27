@@ -28,11 +28,19 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       const html2canvas = html2canvasModule.default;
       
       const canvas = await html2canvas(cardRef.current, {
-        scale: 2, // Higher scale for better quality
+        scale: 4, // Increased scale for much better quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
         logging: false,
+        onclone: (documentClone) => {
+          // Ensure text is visible in the cloned document for capturing
+          const nameElement = documentClone.querySelector('.employee-name-text');
+          if (nameElement) {
+            (nameElement as HTMLElement).style.opacity = '1';
+            (nameElement as HTMLElement).style.visibility = 'visible';
+          }
+        }
       });
       
       const imageData = canvas.toDataURL("image/png", 1.0);
@@ -71,7 +79,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
     >
       {employeeName && (
         <div 
-          className="absolute animate-fade-in"
+          className="absolute"
           style={{
             left: '80px',
             top: '650px',
@@ -84,21 +92,23 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           }}
         >
           <div 
-            className="font-cairo font-bold" 
+            className="font-cairo font-bold employee-name-text" 
             style={{ 
-              fontSize: '28px', // Reduced from 32px
+              fontSize: '26px', // Further reduced from 28px for better fit
               color: '#000000',
               width: '100%',
               textAlign: 'center',
               direction: 'rtl',
               fontFamily: 'Cairo, sans-serif',
-              letterSpacing: '-0.5px', // Add slight negative letter spacing
-              wordSpacing: '0.5px', // Add slight word spacing
-              lineHeight: '1.2', // Control line height
-              padding: '0 10px', // Add some padding to prevent text from touching edges
-              maxWidth: '100%', // Ensure text doesn't overflow
-              overflow: 'hidden', // Hide overflowing text
-              textOverflow: 'ellipsis' // Show ellipsis for overflowing text
+              letterSpacing: '-0.5px',
+              wordSpacing: '0.5px',
+              lineHeight: '1.2',
+              padding: '0 10px',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              fontWeight: 700,  // Ensure bold text
+              textShadow: '0 0 1px rgba(255,255,255,0.2)' // Slight text shadow for better visibility
             }}
           >
             {employeeName}
