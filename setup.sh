@@ -111,29 +111,23 @@ npm install
 echo -e "${BLUE}Building the project...${NC}"
 npm run build
 
-# Install PM2 locally if not already installed globally
-echo -e "${BLUE}Installing PM2 for process management...${NC}"
+# Install PM2 with sudo
+echo -e "${BLUE}Installing PM2 globally with sudo...${NC}"
 if ! command -v pm2 &> /dev/null; then
-  echo -e "${BLUE}PM2 not found globally. Trying to install globally with sudo...${NC}"
-  if command -v sudo &> /dev/null; then
-    sudo npm install -g pm2
-    if [ $? -ne 0 ]; then
-      echo -e "${BLUE}Global installation failed. Installing PM2 locally as a project dependency...${NC}"
-      npm install --save-dev pm2
-      # Create a shortcut to local PM2
-      echo -e "${BLUE}Creating a local PM2 alias...${NC}"
-      echo 'alias pm2="npx pm2"' >> ~/.bashrc
-      source ~/.bashrc
-    fi
-  else
-    echo -e "${BLUE}Sudo not available. Installing PM2 locally as a project dependency...${NC}"
+  sudo npm install -g pm2
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}Failed to install PM2 globally. Installing locally as a fallback...${NC}"
     npm install --save-dev pm2
     # Create a shortcut to local PM2
-    echo -e "${BLUE}Creating a local PM2 alias...${NC}"
     echo 'alias pm2="npx pm2"' >> ~/.bashrc
-    source ~/.bashrc
+    source ~/.bashrc || true
+    PM2_CMD="npx pm2"
+  else
+    PM2_CMD="pm2"
+    echo -e "${GREEN}PM2 installed globally with sudo.${NC}"
   fi
 else
+  PM2_CMD="pm2"
   echo -e "${GREEN}PM2 is already installed globally.${NC}"
 fi
 
@@ -157,13 +151,6 @@ EOL
 echo -e "${BLUE}Installing serve...${NC}"
 npm install --save-dev serve
 
-# Check if PM2 is installed and accessible
-PM2_CMD="pm2"
-if ! command -v pm2 &> /dev/null; then
-  PM2_CMD="npx pm2"
-  echo -e "${BLUE}Using local PM2 via npx...${NC}"
-fi
-
 # Start or restart the application with PM2
 if $PM2_CMD list | grep -q "festive-name-creator"; then
   echo -e "${BLUE}Restarting the application with PM2...${NC}"
@@ -177,9 +164,9 @@ fi
 $PM2_CMD save || echo -e "${RED}Failed to save PM2 process list. This is OK for local installations.${NC}"
 
 # Set up PM2 to start on system boot (only for global PM2 installations)
-if command -v pm2 &> /dev/null; then
+if [ "$PM2_CMD" = "pm2" ]; then
   echo -e "${BLUE}Setting up PM2 to start on system boot...${NC}"
-  $PM2_CMD startup || echo -e "${RED}Failed to set up PM2 startup. This is OK for local installations.${NC}"
+  sudo $PM2_CMD startup || echo -e "${RED}Failed to set up PM2 startup. This is OK for local installations.${NC}"
 fi
 
 # Create an example Nginx configuration
@@ -209,10 +196,10 @@ echo -e "${BLUE}ملاحظة: تأكد من أن الدومين ${GREEN}$DOMAIN$
 echo -e "${GREEN}مسار المشروع الكامل: ${BLUE}$FULL_PATH${NC}"
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}أوامر PM2 المفيدة:${NC}"
-echo -e "${BLUE}  عرض السجلات: pm2 logs festive-name-creator${NC}"
-echo -e "${BLUE}  إيقاف التطبيق: pm2 stop festive-name-creator${NC}"
-echo -e "${BLUE}  إعادة تشغيل التطبيق: pm2 restart festive-name-creator${NC}"
-echo -e "${BLUE}  مراقبة: pm2 monit${NC}"
+echo -e "${BLUE}  عرض السجلات: $PM2_CMD logs festive-name-creator${NC}"
+echo -e "${BLUE}  إيقاف التطبيق: $PM2_CMD stop festive-name-creator${NC}"
+echo -e "${BLUE}  إعادة تشغيل التطبيق: $PM2_CMD restart festive-name-creator${NC}"
+echo -e "${BLUE}  مراقبة: $PM2_CMD monit${NC}"
 echo -e "${GREEN}==========================================${NC}"
 
 exit 0
