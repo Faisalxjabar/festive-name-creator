@@ -10,95 +10,54 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-DOMAIN="eid.b-k.coffee"
-# استخدام عنوان المستودع العام بدلاً من استخدام اسم المستخدم
-REPO_URL="https://github.com/faisalxjabar/festive-name-creator.git"
-
 echo -e "${BLUE}===================================================${NC}"
 echo -e "${GREEN}مرحبًا بك في سكربت تثبيت مشروع بطاقة معايدة عيد الفطر${NC}"
-echo -e "${BLUE}للدومين: ${GREEN}$DOMAIN${NC}"
 echo -e "${BLUE}===================================================${NC}"
+
+# Always use sudo for all operations
+if [ "$EUID" -ne 0 ]; then
+  echo -e "${RED}هذا السكربت يتطلب صلاحيات المستخدم الجذر (root).${NC}"
+  echo -e "${BLUE}جاري إعادة تشغيل السكربت باستخدام sudo...${NC}"
+  sudo bash "$0" "$@"
+  exit $?
+fi
 
 # Check if Node.js is installed
 if ! [ -x "$(command -v node)" ]; then
-  echo -e "${RED}Error: Node.js is not installed.${NC}" >&2
-  echo -e "${BLUE}Installing Node.js and npm...${NC}"
+  echo -e "${RED}Node.js غير مثبت. جاري التثبيت...${NC}"
   
-  # Install Node.js and npm using NVM
-  echo -e "${BLUE}Installing NVM (Node Version Manager)...${NC}"
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-  
-  # Load NVM
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  
-  # Install latest LTS version of Node.js
-  echo -e "${BLUE}Installing latest LTS version of Node.js...${NC}"
-  nvm install --lts
-  nvm use --lts
-  
-  # Verify installation
-  node -v
-  npm -v
-else
-  echo -e "${GREEN}Node.js is already installed. Version: $(node -v)${NC}"
-  echo -e "${GREEN}npm is already installed. Version: $(npm -v)${NC}"
-fi
-
-# Check if git is installed
-if ! [ -x "$(command -v git)" ]; then
-  echo -e "${RED}Error: git is not installed.${NC}" >&2
-  echo -e "${BLUE}Installing git...${NC}"
-  
-  # Install git based on OS
+  # Install Node.js LTS using appropriate package manager
   if [ -x "$(command -v apt)" ]; then
-    sudo apt update
-    sudo apt install -y git
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+    apt install -y nodejs
   elif [ -x "$(command -v yum)" ]; then
-    sudo yum install -y git
-  elif [ -x "$(command -v dnf)" ]; then
-    sudo dnf install -y git
+    curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+    yum install -y nodejs
   else
-    echo -e "${RED}Could not install git. Please install it manually.${NC}"
+    echo -e "${RED}تعذر تثبيت Node.js. الرجاء تثبيته يدويًا.${NC}"
     exit 1
   fi
 else
-  echo -e "${GREEN}git is already installed. Version: $(git --version)${NC}"
+  echo -e "${GREEN}Node.js مُثبت بالفعل. الإصدار: $(node -v)${NC}"
+  echo -e "${GREEN}npm مُثبت بالفعل. الإصدار: $(npm -v)${NC}"
 fi
 
-# Always use current directory
-CURRENT_DIR=$(pwd)
-echo -e "${BLUE}Installing in current directory: ${GREEN}$CURRENT_DIR${NC}"
+# Create project structure
+echo -e "${BLUE}جاري إنشاء بنية المشروع...${NC}"
+mkdir -p public src
 
-# Check directory permissions and fix if needed
-if [ ! -w "$CURRENT_DIR" ]; then
-  echo -e "${RED}No write permission to current directory. Trying with sudo...${NC}"
-  sudo chmod u+w "$CURRENT_DIR" || { 
-    echo -e "${RED}Failed to set write permissions. Please run this script with sudo or fix permissions manually.${NC}"; 
-    exit 1; 
-  }
-fi
+# Create basic files
+echo -e "${BLUE}جاري إنشاء الملفات الأساسية...${NC}"
 
-# Clone the repository content directly to current directory
-echo -e "${BLUE}Cloning the repository content to current directory...${NC}"
-# Create a temporary directory that we have permission to write to
-TEMP_CLONE_DIR="/tmp/temp_festive_clone_$$"
-git clone "$REPO_URL" "$TEMP_CLONE_DIR" --depth=1 || {
-  echo -e "${RED}Failed to clone repository. Creating basic project structure...${NC}"
-  # Make sure we can create files in the current directory
-  sudo mkdir -p public src || true
-  sudo chmod -R 775 public src || true
-  
-  # Create a basic index.html file
-  sudo tee public/index.html > /dev/null << EOL
+# index.html
+cat > public/index.html << 'EOL'
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>بطاقة معايدة عيد الفطر</title>
     <meta name="description" content="بطاقة معايدة عيد الفطر - أنشئ بطاقة المعايدة الخاصة بك" />
-    <meta name="author" content="Eid Mubarak Card Creator" />
   </head>
   <body>
     <div id="root"></div>
@@ -106,120 +65,309 @@ git clone "$REPO_URL" "$TEMP_CLONE_DIR" --depth=1 || {
   </body>
 </html>
 EOL
+
+# Create package.json
+cat > package.json << 'EOL'
+{
+  "name": "eid-greeting-card",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "start": "serve -s dist"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "html2canvas": "^1.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.27",
+    "serve": "^14.2.0",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  }
+}
+EOL
+
+# Create main.tsx
+mkdir -p src
+cat > src/main.tsx << 'EOL'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+EOL
+
+# Create App.tsx
+cat > src/App.tsx << 'EOL'
+import React, { useState } from 'react';
+import './App.css';
+import html2canvas from 'html2canvas';
+
+function App() {
+  const [name, setName] = useState('');
+  const [selectedDesign, setSelectedDesign] = useState(1);
+  
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  };
+  
+  const handleDesignChange = (designId) => {
+    setSelectedDesign(designId);
+  };
+  
+  const downloadCard = () => {
+    const cardElement = document.getElementById('eid-card');
+    if (!cardElement) return;
+    
+    html2canvas(cardElement).then((canvas) => {
+      const link = document.createElement('a');
+      link.download = 'eid-card.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-center mb-8">بطاقة معايدة عيد الفطر</h1>
+      
+      <div className="mb-6">
+        <label className="block mb-2 text-lg">أدخل اسمك:</label>
+        <input
+          type="text"
+          value={name}
+          onChange={handleNameChange}
+          className="w-full p-2 border rounded text-right"
+          placeholder="اكتب اسمك هنا..."
+        />
+      </div>
+      
+      <div className="mb-6">
+        <h2 className="text-xl mb-4">اختر تصميم البطاقة:</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1, 2, 3].map((designId) => (
+            <div
+              key={designId}
+              className={`border p-4 cursor-pointer ${selectedDesign === designId ? 'border-4 border-blue-500' : ''}`}
+              onClick={() => handleDesignChange(designId)}
+            >
+              <div className="bg-gray-200 h-40 flex items-center justify-center">
+                تصميم {designId}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="mb-6">
+        <h2 className="text-xl mb-4">معاينة البطاقة:</h2>
+        <div id="eid-card" className="border p-8 bg-yellow-50 text-center">
+          <h3 className="text-2xl font-bold mb-4">عيد فطر مبارك</h3>
+          {name && <p className="text-xl">تهنئة من: {name}</p>}
+          <p className="mt-4">كل عام وأنتم بخير</p>
+        </div>
+      </div>
+      
+      <div className="text-center">
+        <button
+          onClick={downloadCard}
+          className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
+        >
+          تحميل البطاقة
+        </button>
+      </div>
+    </div>
+  );
 }
 
-# If we successfully cloned the repo, copy files to current directory
-if [ -d "$TEMP_CLONE_DIR" ]; then
-  echo -e "${BLUE}Moving files to current directory...${NC}"
-  # Copy all files including hidden ones
-  sudo cp -a "$TEMP_CLONE_DIR/." "$CURRENT_DIR/"
-  # Clean up temp directory
-  sudo rm -rf "$TEMP_CLONE_DIR"
-  # Fix permissions
-  sudo chown -R $(whoami) "$CURRENT_DIR"
-  sudo chmod -R 775 "$CURRENT_DIR"
-fi
+export default App;
+EOL
 
-FULL_PATH=$CURRENT_DIR
-echo -e "${BLUE}Working in directory: ${GREEN}$FULL_PATH${NC}"
+# Create index.css
+cat > src/index.css << 'EOL'
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  direction: rtl;
+  text-align: right;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+EOL
+
+# Create App.css
+cat > src/App.css << 'EOL'
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+EOL
+
+# Create vite.config.js
+cat > vite.config.js << 'EOL'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+EOL
+
+# Create tailwind.config.js
+cat > tailwind.config.js << 'EOL'
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+EOL
+
+# Create postcss.config.js
+cat > postcss.config.js << 'EOL'
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+EOL
+
+# Create tsconfig.json
+cat > tsconfig.json << 'EOL'
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+EOL
+
+# Create tsconfig.node.json
+cat > tsconfig.node.json << 'EOL'
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.js"]
+}
+EOL
 
 # Install dependencies
-echo -e "${BLUE}Installing project dependencies...${NC}"
+echo -e "${BLUE}جاري تثبيت الاعتماديات...${NC}"
 npm install
 
 # Build the project
-echo -e "${BLUE}Building the project...${NC}"
+echo -e "${BLUE}جاري بناء المشروع...${NC}"
 npm run build
 
-# Install PM2 with sudo
-echo -e "${BLUE}Installing PM2 globally with sudo...${NC}"
-if ! command -v pm2 &> /dev/null; then
-  sudo npm install -g pm2
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}Failed to install PM2 globally. Installing locally as a fallback...${NC}"
-    npm install --save-dev pm2
-    # Create a shortcut to local PM2
-    echo 'alias pm2="npx pm2"' >> ~/.bashrc
-    source ~/.bashrc || true
-    PM2_CMD="npx pm2"
-  else
-    PM2_CMD="pm2"
-    echo -e "${GREEN}PM2 installed globally with sudo.${NC}"
-  fi
-else
-  PM2_CMD="pm2"
-  echo -e "${GREEN}PM2 is already installed globally.${NC}"
-fi
+# Install PM2 globally with sudo
+echo -e "${BLUE}جاري تثبيت PM2 عالميًا...${NC}"
+npm install -g pm2
 
-# Create PM2 configuration file
-echo -e "${BLUE}Creating PM2 configuration...${NC}"
-cat > ecosystem.config.js << EOL
+# Create PM2 configuration
+echo -e "${BLUE}جاري إنشاء تكوين PM2...${NC}"
+cat > ecosystem.config.js << 'EOL'
 module.exports = {
   apps: [{
-    name: "festive-name-creator",
-    script: "node_modules/.bin/serve",
+    name: "eid-greeting-app",
+    script: "npm",
+    args: "run start",
     env: {
-      PM2_SERVE_PATH: "./dist",
-      PM2_SERVE_SPA: "true",
-      PM2_SERVE_HOMEPAGE: "/index.html"
+      NODE_ENV: "production",
     }
   }]
 }
 EOL
 
-# Install serve if not already installed
-echo -e "${BLUE}Installing serve...${NC}"
-npm install --save-dev serve
+# Start the application with PM2
+echo -e "${BLUE}جاري بدء التطبيق باستخدام PM2...${NC}"
+pm2 start ecosystem.config.js
 
-# Start or restart the application with PM2
-if $PM2_CMD list | grep -q "festive-name-creator"; then
-  echo -e "${BLUE}Restarting the application with PM2...${NC}"
-  sudo $PM2_CMD restart festive-name-creator
-else
-  echo -e "${BLUE}Starting the application with PM2...${NC}"
-  sudo $PM2_CMD start ecosystem.config.js
-fi
+# Save PM2 process list
+pm2 save
 
-# Save the PM2 process list
-sudo $PM2_CMD save || echo -e "${RED}Failed to save PM2 process list. This is OK for local installations.${NC}"
+# Configure PM2 to start on system boot
+pm2 startup
 
-# Set up PM2 to start on system boot (only for global PM2 installations)
-if [ "$PM2_CMD" = "pm2" ]; then
-  echo -e "${BLUE}Setting up PM2 to start on system boot...${NC}"
-  sudo $PM2_CMD startup || echo -e "${RED}Failed to set up PM2 startup. This is OK for local installations.${NC}"
-fi
-
-# Create an example Nginx configuration
-echo -e "${BLUE}Creating example Nginx configuration...${NC}"
-cat > nginx-example.conf << EOL
-# Example Nginx configuration for $DOMAIN
+# Create example Nginx configuration
+echo -e "${BLUE}جاري إنشاء مثال لتكوين Nginx...${NC}"
+cat > nginx.conf << 'EOL'
 server {
     listen 80;
-    server_name $DOMAIN;
+    server_name eid.example.com;
 
     location / {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
     }
 }
 EOL
 
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}تم تثبيت وتشغيل المشروع بنجاح!${NC}"
-echo -e "${GREEN}المشروع يعمل الآن ويدار بواسطة PM2.${NC}"
-echo -e "${GREEN}تم إنشاء ملف تكوين Nginx مثالي في ${BLUE}nginx-example.conf${GREEN} يمكنك استخدامه لإعداد الخادم الخاص بك.${NC}"
-echo -e "${BLUE}ملاحظة: تأكد من أن الدومين ${GREEN}$DOMAIN${BLUE} يشير إلى عنوان IP الخاص بالخادم.${NC}"
-echo -e "${GREEN}مسار المشروع الكامل: ${BLUE}$FULL_PATH${NC}"
+echo -e "${GREEN}المشروع يعمل الآن على المنفذ 3000${NC}"
+echo -e "${GREEN}يمكنك فتح المتصفح وزيارة http://localhost:3000${NC}"
+echo -e "${BLUE}تم إنشاء ملف تكوين Nginx في ${GREEN}nginx.conf${BLUE}${NC}"
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}أوامر PM2 المفيدة:${NC}"
-echo -e "${BLUE}  عرض السجلات: sudo $PM2_CMD logs festive-name-creator${NC}"
-echo -e "${BLUE}  إيقاف التطبيق: sudo $PM2_CMD stop festive-name-creator${NC}"
-echo -e "${BLUE}  إعادة تشغيل التطبيق: sudo $PM2_CMD restart festive-name-creator${NC}"
-echo -e "${BLUE}  مراقبة: sudo $PM2_CMD monit${NC}"
+echo -e "${BLUE}  عرض السجلات: pm2 logs eid-greeting-app${NC}"
+echo -e "${BLUE}  إيقاف التطبيق: pm2 stop eid-greeting-app${NC}"
+echo -e "${BLUE}  إعادة تشغيل التطبيق: pm2 restart eid-greeting-app${NC}"
+echo -e "${BLUE}  مراقبة: pm2 monit${NC}"
 echo -e "${GREEN}==========================================${NC}"
 
 exit 0
