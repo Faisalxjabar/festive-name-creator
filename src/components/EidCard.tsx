@@ -18,17 +18,13 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
   }, []);
 
   const generateImage = async () => {
-    if (!cardRef.current || !employeeName || isRendering) return;
+    if (!employeeName || isRendering) return;
     
     try {
       setIsRendering(true);
       console.log("Starting image generation with name:", employeeName);
       
-      // Wait for HTML2Canvas to be loaded dynamically
-      const html2canvasModule = await import("html2canvas");
-      const html2canvas = html2canvasModule.default;
-      
-      // Create a completely new div for rendering
+      // Create a temporary canvas directly
       const tempDiv = document.createElement('div');
       tempDiv.style.position = 'absolute';
       tempDiv.style.left = '-9999px';
@@ -37,83 +33,52 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       tempDiv.style.height = '1024px';
       document.body.appendChild(tempDiv);
       
-      // Create a clean card element with proper styling
-      tempDiv.innerHTML = `
-        <div 
-          style="
-            width: 576px; 
-            height: 1024px; 
-            background-image: url('/lovable-uploads/3ca3041a-3d6f-42b5-bd45-0ca8aa506516.png');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            font-family: 'Cairo', sans-serif;
-          "
-        >
-          <div 
-            style="
-              position: absolute;
-              left: 80px;
-              top: 650px;
-              width: 417px;
-              height: 72px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              direction: rtl;
-              text-align: center;
-            "
-          >
-            <div 
-              style="
-                font-family: 'Cairo', sans-serif;
-                font-size: 26px;
-                font-weight: 700;
-                color: #000000;
-                text-shadow: 0 0 2px rgba(0,0,0,0.8);
-                letter-spacing: -0.5px;
-                width: 100%;
-                text-align: center;
-                direction: rtl;
-                line-height: 1.2;
-                padding: 0 10px;
-              "
-            >${employeeName}</div>
-          </div>
-        </div>
-      `;
+      // Load the background image first
+      const backgroundImage = new Image();
+      backgroundImage.src = '/lovable-uploads/3ca3041a-3d6f-42b5-bd45-0ca8aa506516.png';
+      backgroundImage.crossOrigin = "Anonymous";
       
-      // Force load the Cairo font before capturing
-      const fontLoader = document.createElement('div');
-      fontLoader.style.fontFamily = 'Cairo, sans-serif';
-      fontLoader.style.position = 'absolute';
-      fontLoader.style.left = '-9999px';
-      fontLoader.style.top = '-9999px';
-      fontLoader.textContent = employeeName;
-      document.body.appendChild(fontLoader);
-      
-      // Wait briefly for fonts to apply
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Capture the image
-      const canvas = await html2canvas(tempDiv.firstChild as HTMLElement, {
-        scale: 8, // Very high quality
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        logging: true
+      await new Promise((resolve, reject) => {
+        backgroundImage.onload = resolve;
+        backgroundImage.onerror = reject;
       });
       
-      // Clean up the temporary elements
-      document.body.removeChild(tempDiv);
-      document.body.removeChild(fontLoader);
+      // Set up the canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = 576 * 2; // Higher resolution
+      canvas.height = 1024 * 2; // Higher resolution
+      const ctx = canvas.getContext('2d');
       
+      if (!ctx) {
+        throw new Error("Could not get canvas context");
+      }
+      
+      // Draw background image
+      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      
+      // Add text
+      ctx.font = "bold 54px Cairo, sans-serif";
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "center";
+      ctx.direction = "rtl";
+      ctx.textBaseline = "middle";
+      
+      // Draw text at the correct position
+      ctx.fillText(employeeName, canvas.width / 2, canvas.height * 0.635);
+      
+      // Convert to image data
       const imageData = canvas.toDataURL("image/png", 1.0);
       console.log("Image generated successfully");
+      
+      // Clean up
+      document.body.removeChild(tempDiv);
+      
+      // Return the image data
       onImageGenerated(imageData);
     } catch (error) {
       console.error("Error generating image:", error);
+      // Even on error, we need to reset the loading state to allow retry
+      onImageGenerated("error"); // Send error signal
     } finally {
       setIsRendering(false);
     }

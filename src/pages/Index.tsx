@@ -38,6 +38,16 @@ const Index = () => {
   };
 
   const handleImageGenerated = (imageData: string) => {
+    if (imageData === "error") {
+      setIsLoading(false);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء إنشاء البطاقة، يرجى المحاولة مرة أخرى",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setGeneratedImage(imageData);
     setIsLoading(false);
     
@@ -105,7 +115,7 @@ const Index = () => {
                   {isLoading ? "جاري إنشاء البطاقة..." : "إنشاء بطاقة المعايدة"}
                 </Button>
                 
-                {generatedImage && (
+                {generatedImage && !isLoading && (
                   <Button 
                     type="button" 
                     onClick={downloadImage} 
