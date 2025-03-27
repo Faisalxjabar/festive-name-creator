@@ -25,7 +25,7 @@ const Index = () => {
     }
 
     // Validate name length to prevent overflow
-    if (employeeName.length > 30) {
+    if (employeeName.length > 25) {
       toast({
         title: "تنبيه",
         description: "الاسم طويل جدًا، قد يتم اقتصاصه في البطاقة",
@@ -91,10 +91,10 @@ const Index = () => {
                     placeholder="أدخل اسمك هنا"
                     className="eid-input"
                     dir="rtl"
-                    maxLength={30} // Reduced maximum length for better readability
+                    maxLength={25} // Reduced maximum length for better readability
                   />
                   <p className="text-xs text-black/60 mt-1">
-                    {employeeName.length > 0 && `${employeeName.length} / 30 حرف`}
+                    {employeeName.length > 0 && `${employeeName.length} / 25 حرف`}
                   </p>
                 </div>
                 <Button 

@@ -27,18 +27,36 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
       const html2canvasModule = await import("html2canvas");
       const html2canvas = html2canvasModule.default;
       
+      // Create a deep clone of the card to modify for rendering
+      const cardClone = cardRef.current.cloneNode(true) as HTMLElement;
+      const nameElement = cardClone.querySelector('.employee-name-text');
+      
+      // Apply styles directly to ensure text is visible in the capture
+      if (nameElement) {
+        (nameElement as HTMLElement).style.opacity = '1';
+        (nameElement as HTMLElement).style.visibility = 'visible';
+        (nameElement as HTMLElement).style.display = 'block';
+      }
+      
       const canvas = await html2canvas(cardRef.current, {
-        scale: 4, // Increased scale for much better quality
+        scale: 6, // Increased for much higher quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
         logging: false,
         onclone: (documentClone) => {
-          // Ensure text is visible in the cloned document for capturing
+          // Ensure text is visible and properly styled in the cloned document for capturing
           const nameElement = documentClone.querySelector('.employee-name-text');
           if (nameElement) {
-            (nameElement as HTMLElement).style.opacity = '1';
-            (nameElement as HTMLElement).style.visibility = 'visible';
+            const nameStyle = nameElement as HTMLElement;
+            nameStyle.style.opacity = '1';
+            nameStyle.style.visibility = 'visible';
+            nameStyle.style.display = 'block';
+            nameStyle.style.fontSize = '26px';
+            nameStyle.style.fontWeight = '700';
+            nameStyle.style.color = '#000000';
+            nameStyle.style.textShadow = '0px 0px 1px rgba(0,0,0,0.8)';
+            nameStyle.style.letterSpacing = '-0.5px';
           }
         }
       });
@@ -94,7 +112,7 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
           <div 
             className="font-cairo font-bold employee-name-text" 
             style={{ 
-              fontSize: '26px', // Further reduced from 28px for better fit
+              fontSize: '26px',
               color: '#000000',
               width: '100%',
               textAlign: 'center',
@@ -107,8 +125,8 @@ const EidCard: React.FC<EidCardProps> = ({ employeeName, onImageGenerated }) => 
               maxWidth: '100%',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              fontWeight: 700,  // Ensure bold text
-              textShadow: '0 0 1px rgba(255,255,255,0.2)' // Slight text shadow for better visibility
+              fontWeight: 700,
+              textShadow: '0 0 1px rgba(0,0,0,0.8)' // Darker text shadow for better visibility
             }}
           >
             {employeeName}
