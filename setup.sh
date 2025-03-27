@@ -64,11 +64,46 @@ else
   echo -e "${GREEN}git is already installed. Version: $(git --version)${NC}"
 fi
 
-# Clone the repository if not already done
+# Determine suitable directory for installation
+# Try current directory first, if not writable use home directory
 REPO_DIR="festive-name-creator"
+if [ ! -w "." ]; then
+  echo -e "${BLUE}Current directory is not writable, using home directory instead.${NC}"
+  cd $HOME
+  echo -e "${BLUE}Changed to directory: $(pwd)${NC}"
+fi
+
+# Clone the repository if not already done
 if [ ! -d "$REPO_DIR" ]; then
   echo -e "${BLUE}Cloning the repository...${NC}"
   git clone https://github.com/yourusername/festive-name-creator.git "$REPO_DIR"
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}Failed to clone repository. Trying to create directory manually...${NC}"
+    mkdir -p "$REPO_DIR"
+    cd "$REPO_DIR"
+    echo -e "${BLUE}Initializing git repository...${NC}"
+    git init
+    echo -e "${BLUE}Creating basic project structure...${NC}"
+    # Create basic HTML file
+    mkdir -p public src
+    cat > public/index.html << EOL
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بطاقة معايدة عيد الفطر</title>
+    <meta name="description" content="بطاقة معايدة عيد الفطر - أنشئ بطاقة المعايدة الخاصة بك" />
+    <meta name="author" content="Eid Mubarak Card Creator" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+EOL
+    cd ..
+  fi
 else
   echo -e "${GREEN}Repository already exists. Pulling latest changes...${NC}"
   cd "$REPO_DIR"
@@ -78,6 +113,8 @@ fi
 
 # Navigate to the project directory
 cd "$REPO_DIR"
+FULL_PATH=$(pwd)
+echo -e "${BLUE}Working in directory: ${GREEN}$FULL_PATH${NC}"
 
 # Install dependencies
 echo -e "${BLUE}Installing project dependencies...${NC}"
@@ -157,6 +194,7 @@ echo -e "${GREEN}تم تثبيت وتشغيل المشروع بنجاح!${NC}"
 echo -e "${GREEN}المشروع يعمل الآن ويدار بواسطة PM2.${NC}"
 echo -e "${GREEN}تم إنشاء ملف تكوين Nginx مثالي في ${BLUE}nginx-example.conf${GREEN} يمكنك استخدامه لإعداد الخادم الخاص بك.${NC}"
 echo -e "${BLUE}ملاحظة: تأكد من أن الدومين ${GREEN}$DOMAIN${BLUE} يشير إلى عنوان IP الخاص بالخادم.${NC}"
+echo -e "${GREEN}مسار المشروع الكامل: ${BLUE}$FULL_PATH${NC}"
 echo -e "${GREEN}==========================================${NC}"
 echo -e "${GREEN}أوامر PM2 المفيدة:${NC}"
 echo -e "${BLUE}  عرض السجلات: pm2 logs festive-name-creator${NC}"
